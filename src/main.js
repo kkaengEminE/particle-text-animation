@@ -5,6 +5,7 @@ import { GifExporter } from './GifExporter.js';
 import { ThemeManager } from './ThemeManager.js';
 import { WidthMarker } from './WidthMarker.js';
 import { ThreeRenderer } from './ThreeRenderer.js';
+import { Monetization } from './lib/monetization/index.js';
 
 class App {
   constructor() {
@@ -15,6 +16,7 @@ class App {
     this.themeManager = null;
     this.widthMarker = null;
     this.threeRenderer = null;
+    this.monetization = null;
     this.renderMode = '2d';
     this.lastFrameTime = 0;
     this.isExporting = false;
@@ -54,6 +56,9 @@ class App {
       onExport: () => this._handleExport(),
       onModeToggle: () => this._toggleRenderMode(),
     });
+
+    this.monetization = Monetization.getInstance();
+    this.monetization.init();
 
     requestAnimationFrame((t) => this._animate(t));
   }
@@ -115,8 +120,10 @@ class App {
   async _handleExport() {
     if (this.isExporting || this.renderMode === '3d') return;
 
-    this.uiController.showAdModal();
-    await this.uiController.waitForAdDismissal();
+    await this.monetization.showAd({
+      showModal: () => this.uiController.showAdModal(),
+      waitForDismissal: () => this.uiController.waitForAdDismissal(),
+    });
 
     this.isExporting = true;
     this.uiController.showExportProgress();

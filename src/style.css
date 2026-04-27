@@ -425,8 +425,14 @@ body {
   transition: background 0.2s;
 }
 
-#ad-modal-close:hover {
+#ad-modal-close:hover:not(:disabled) {
   background: #9999ff;
+}
+
+#ad-modal-close:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  pointer-events: none;
 }
 
 /* Spinner */
